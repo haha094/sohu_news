@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <!--edge浏览器H5兼容设置-->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!--360浏览器H5兼容设置-->
+        <!--<meta name="renderer" content="webkit" />-->
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+        <!-- 引入样式 -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='element-ui/index.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/news_index.css') }}">
+        <!-- 引入组件库 -->
+        <script src="{{ url_for('static', filename='vue/vue.js') }}"></script>
+        <script src="{{ url_for('static', filename='element-ui/index.js') }}"></script>
+        <script src="{{ url_for('static', filename='axios/axios-0.18.0.js') }}"></script>
+        <title>搜狐时政</title>
+    </head>
+
+    <body>
+    {% raw %}
+    <div id="app">
+        <div class="container">
+            <div class="h-title">
+                <h1>搜狐时政</h1>
+            </div>
+            <!-- <el-button type="primary" @click="updateNews">关闭</el-button> -->
+
+            <div v-for="item in data"
+                 :key="item.id" style="display: flex;cursor: pointer;border-bottom: 1px solid #ccc;padding-bottom: 5px;margin-bottom: 5px" class="news-list">
+                <a :href="item.url" style="text-decoration: none; color: inherit;">
+                    <div v-if="item.cover" class="item-img-container" style="margin-right: 5px">
+                            <img  class="item-img" :src="item.cover" alt="">
+                    </div>
+                    <div v-else class="item-img-container"></div>
+
+                    <div class="item-text-content">
+                        <h2 onmouseover="this.style.color='red'" onmouseout="this.style.color='black'" style="font-size: 18px">
+                            {{ item.title }}
+                        </h2>
+                        <span class="single-line-brief">{{ item.brief }}</span>
+                        <br/>
+                        <span class="item-author">{{ item.authorName }}</span>
+                        <span class="item-post-time">{{ item.postTime }}</span>
+                        <a href="#"></a>
+                    </div>
+                </a>
+            </div>
+
+            <div class="pagination-container">
+                <!--currentPage：当前页码;  pageSize:页记录数; total:总记录数-->
+                <el-pagination
+                        class="pagiantion"
+                        :current-page="pagination.pageNum"
+                        :page-size="pagination.pageSize"
+                        :total="pagination.total"
+                        layout="total,prev, pager, next, jumper"
+                        @current-change="handleCurrentChange">
+                </el-pagination>
+            </div>
+        </div>
+
+
+    </div>
+    {% endraw %}
+    </body>
+
+    <script>
+        var vue = new Vue({
+            el: '#app',
+            data: {
+                name: "ltx",
+                data: [],
+                pagination: {//分页相关模型数据
+                    pageNum: 1,//当前页码
+                    pageSize: 20,//每页显示的记录数
+                    total: 0,//总记录数
+                }
+            },
+            {#数据初始化#}
+            created() {
+                this.updatePage()
+            },
+            {#组件挂载后调用#}
+            mounted() {
+                this.updateNews()
+                this.getNews()
+            },
+            methods: {
+                updateNews() {
+                    {#this.$message.success("hahah")#}
+                    //发送异步请求--已经携带了分页条件
+                    axios.get("/news/update").then((res) => {
+                        {#console.log(res.data.code)#}
+                        console.log(res.data.data)
+                    })
+                },
+                updatePage(){
+                    axios.get("/news/get_total").then((res) => {
+                        {#console.log(res.data.code)#}
+                        console.log(res.data)
+                        this.pagination.total = res.data.data;
+                    })
+                },
+                getNews() {
+                    console.log("-------hahah.font.getNews is Start...-------")
+                    axios.get('/news/get_news_v2', {
+                        params: {
+                            page_num: this.pagination.pageNum,
+                            page_size: this.pagination.pageSize
+                        }
+                    })
+                        .then(response => {
+                            this.data = response.data.data
+
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                },
+                handleCurrentChange(page) {
+                    this.pagination.pageNum = page
+                    this.getNews()
+                    window.scrollTo(0, 0)
+                }
+
+            }
+        })
+
+    </script>
+</html>

@@ -1,0 +1,44 @@
+.item-img-container{
+                position: relative;
+                overflow: hidden;
+                width: 234px;
+                height: 132px;
+            }
+
+            .item-img {
+                width: 234px;
+                height: 132px;
+                transition: transform 0.3s ease-in-out;
+            }
+            .item-img-container:hover img {
+                transform: scale(1.1); /* 图片放大的比例 */
+            }
+            .single-line-brief{
+                display: -webkit-box;
+                -webkit-line-clamp: 1;     /* 设置最大行数 */
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                color:#999;
+                font-size: 14px;
+            }
+            .item-author{
+                overflow: hidden;
+                margin-right: 5px;
+                font-weight: bold;
+                font-size: 12px;
+                color:#999;
+            }
+            .item-author:hover{
+                color:#444;
+            }
+            .item-post-time{
+                font-size: 12px;
+                overflow: hidden;
+                margin-right: 5px;
+                color:#999
+            }
+            .pagiantion{
+                margin-top: 20px; /* 适当调整间距大小 */
+                margin-bottom: 10px; /* 适当调整间距大小 */
+                padding: 5px;
+            }
